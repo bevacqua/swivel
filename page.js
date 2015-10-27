@@ -9,14 +9,22 @@ module.exports = createChannel;
 function createChannel () {
   var internalEmitter = emitter();
   var api = {
-    on: internalEmitter.on,
-    once: internalEmitter.once,
-    off: internalEmitter.off,
+    on: selfed('on'),
+    once: selfed('once'),
+    off: selfed('off'),
     emit: postToWorker
   };
-  var postFromWorker = serialization.emission(internalEmitter, null);
+  var postFromWorker = serialization.emission(internalEmitter, { broadcast: false });
   navigator.serviceWorker.onmessage = broadcastHandler;
   return api;
+
+  function selfed (method) {
+    return selfish;
+    function selfish () {
+      internalEmitter[method].apply(this, arguments);
+      return api;
+    }
+  }
 
   function postToWorker () {
     var payload = serialization.parsePayload(atoa(arguments));
@@ -30,8 +38,8 @@ function createChannel () {
 
   function broadcastHandler (e) {
     var data = e.data;
-    if (data && data.type === 'swivel:_broadcast') {
-      internalEmitter.emit.apply(null, ['broadcast'].concat(data.payload));
+    if (data && data.__broadcast) {
+      internalEmitter.emit.apply({ broadcast: true }, [data.type].concat(data.payload));
     }
   }
 }

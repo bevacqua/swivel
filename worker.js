@@ -9,15 +9,23 @@ module.exports = createChannel;
 function createChannel () {
   var internalEmitter = emitter();
   var api = {
-    on: internalEmitter.on,
-    once: internalEmitter.once,
-    off: internalEmitter.off,
+    on: selfed('on'),
+    once: selfed('once'),
+    off: selfed('off'),
     broadcast: broadcastToPages
   };
 
   self.addEventListener('message', postFromPage);
 
   return api;
+
+  function selfed (method) {
+    return selfish;
+    function selfish () {
+      internalEmitter[method].apply(this, arguments);
+      return api;
+    }
+  }
 
   function postFromPage (e) {
     var client = { reply: reply };
@@ -28,14 +36,14 @@ function createChannel () {
     }
   }
 
-  function broadcastToPages () {
-    var payload = atoa(arguments);
+  function broadcastToPages (type) {
+    var payload = atoa(arguments, 1);
     return self.clients.matchAll().then(gotClients);
     function gotClients (clients) {
       return clients.map(emitToClient);
     }
     function emitToClient (client) {
-      return client.postMessage({ type: 'swivel:_broadcast', payload: payload });
+      return client.postMessage({ type: type, payload: payload, __broadcast: true });
     }
   }
 }
