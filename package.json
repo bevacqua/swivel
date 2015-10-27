@@ -1,0 +1,12 @@
+{
+  "name": "swivel",
+  "version": "0.0.1",
+  "description": "Message passing between ServiceWorker and pages made simple",
+  "main": "index.js",
+  "author": "Nicolas Bevacqua <nicolasbevacqua@gmail.com> (http://bevacqua.io/)",
+  "license": "MIT",
+  "dependencies": {
+    "atoa": "1.0.0",
+    "contra": "1.9.1"
+  }
+}
