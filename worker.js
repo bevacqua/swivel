@@ -24,23 +24,18 @@ function createChannel () {
     serialization.emission(internalEmitter, client)(e);
     function reply (type) {
       var payload = serialization.parsePayload(atoa(arguments));
-      console.log('WORKER::', 'issue #1: e.source is null');
-      return e.source.postMessage(payload);
+      return e.ports[0].postMessage(payload);
     }
   }
 
   function broadcastToPages () {
     var payload = atoa(arguments);
-    return self.clients.matchAll(gotClients);
+    return self.clients.matchAll().then(gotClients);
     function gotClients (clients) {
       return clients.map(emitToClient);
     }
     function emitToClient (client) {
-      return client.postMessage({
-        error: null,
-        type: 'broadcast',
-        payload: payload
-      });
+      return client.postMessage({ type: 'swivel:_broadcast', payload: payload });
     }
   }
 }

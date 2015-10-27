@@ -1,7 +1,5 @@
 'use strict';
 
-var atoa = require('atoa');
-
 function serializeError (err) {
   return err ? err.toString() : null;
 }
@@ -31,8 +29,6 @@ function emission (emitter, context) {
 }
 
 module.exports = {
-  serializeError: serializeError,
-  deserializeError: deserializeError,
   parsePayload: parsePayload,
   emission: emission
 };
