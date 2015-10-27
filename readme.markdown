@@ -136,7 +136,7 @@ The public `swivel` API exports a number of methods designed for web pages.
 This method listens for events emitted by the [`ServiceWorker` API][sw-api]. You can bind an event handler that receives all arguments emitted at that level. It can be triggered from a `ServiceWorker` in two different ways. Returns [`swivel`][wp-api] for chaining.
 
 - [`swivel.broadcast(type, ...data)`][sw-broadcast] triggers handlers registered with `swivel.on(type, fn)` on every page
-- `this.reply(type, ...data)` triggers handlers registered with `swivel.on(type, fn)`
+- [`this.reply(type, ...data)`][sw-reply] triggers handlers registered with `swivel.on(type, fn)`
 
 To differentiate between the two, you may check the `this.broadcast` boolean property in your `handler`.
 
@@ -302,3 +302,4 @@ MIT
 [sw-listen]: #swivelontype-handler-2
 [sw-once]: #swiveloncetype-handler-2
 [sw-broadcast]: #swivelbroadcasttype-data
+[sw-reply]: #thisreplytype-data
