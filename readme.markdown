@@ -1,5 +1,3 @@
-# WIP
-
 # swivel
 
 > Message passing between ServiceWorker and pages made simple
