@@ -177,7 +177,7 @@ swivel.on('data', function handler (datum1, datum2) {
 
 ## `swivel.emit(type, ...data)`
 
-This method posts a message to the `ServiceWorker`. You can then use [`swivel.on(type, handler)`][listen-sw] from the `ServiceWorker` to listen to it.
+This method posts a message to the `ServiceWorker`. You can then use [`swivel.on(type, handler)`][sw-listen] from the `ServiceWorker` to listen to it.
 
 ##### Example
 
