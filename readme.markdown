@@ -295,10 +295,10 @@ MIT
 
 [1]: https://ponyfoo.com/articles/serviceworker-revolution "ServiceWorker: Revolution of the Web Platform on Pony Foo"
 [wp-api]: #api-in-web-pages
-[wp-listen]: #swivelon-type-handler
-[wp-once]: #swivelonce-type-handler
-[wp-emit]: #swivelemit-type-data
+[wp-listen]: #swivelontype-handler
+[wp-once]: #swiveloncetype-handler
+[wp-emit]: #swivelemittype-data
 [sw-api]: #api-in-serviceworker
-[sw-listen]: #swivelon-type-handler-2
-[sw-once]: #swivelonce-type-handler-2
-[sw-broadcast]: #swivelbroadcast-type-data
+[sw-listen]: #swivelontype-handler-2
+[sw-once]: #swiveloncetype-handler-2
+[sw-broadcast]: #swivelbroadcasttype-data
