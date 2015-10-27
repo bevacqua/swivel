@@ -22,7 +22,7 @@ function createChannel () {
   function postFromPage (e) {
     var client = { reply: reply };
     serialization.emission(internalEmitter, client)(e);
-    function reply (type) {
+    function reply () {
       var payload = serialization.parsePayload(atoa(arguments));
       return e.ports[0].postMessage(payload);
     }
