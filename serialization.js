@@ -18,8 +18,21 @@ function parsePayload (payload) {
   return { error: null, type: type, payload: payload };
 }
 
+function emission (emitter, context) {
+  return emit;
+  function emit (e) {
+    var data = e.data;
+    if (data.type === 'error') {
+      emitter.emit.call(context, 'error', deserializeError(data.error));
+    } else {
+      emitter.emit.apply(context, [data.type].concat(data.payload));
+    }
+  }
+}
+
 module.exports = {
   serializeError: serializeError,
   deserializeError: deserializeError,
-  parsePayload: parsePayload
+  parsePayload: parsePayload,
+  emission: emission
 };

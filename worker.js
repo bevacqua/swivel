@@ -21,14 +21,7 @@ function createChannel () {
 
   function postFromPage (e) {
     var client = { reply: reply };
-    var ports = e.ports;
-    var source = e.source;
-    var data = e.data;
-    if (data.type === 'error') {
-      internalEmitter.emit.call(client, 'error', serialization.deserializeError(data.error));
-    } else {
-      internalEmitter.emit.apply(client, [data.type].concat(data.payload));
-    }
+    serialization.emission(internalEmitter, client)(e);
     function reply (type) {
       var payload = serialization.parsePayload(atoa(arguments));
       console.log('WORKER::', 'issue #1: e.source is null');
