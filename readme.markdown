@@ -22,14 +22,17 @@ npm i -S swivel
 
 # Usage
 
-On your web pages, you can listen for messages from the ServiceWorker.
+On your web pages, you can listen for messages from the ServiceWorker. Remember to wait for ServiceWorker to become active!
 
 ```js
-navigator.serviceWorker.register('/service-worker.js').then(function () {
-  swivel.on('data', function (...data) {
-    // do something with ...data
+navigator.serviceWorker
+  .register('/service-worker.js')
+  .then(navigator.serviceWorker.ready)
+  .then(function () {
+    swivel.on('data', function (...data) {
+      // do something with ...data
+    });
   });
-});
 ```
 
 You can also emit messages to the ServiceWorker from your pages.
