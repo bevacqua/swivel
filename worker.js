@@ -12,7 +12,8 @@ function createChannel () {
     on: selfed('on'),
     once: selfed('once'),
     off: selfed('off'),
-    broadcast: broadcastToPages
+    broadcast: broadcastToPages,
+    emit: replyTo
   };
 
   self.addEventListener('message', postFromPage);
@@ -28,12 +29,10 @@ function createChannel () {
   }
 
   function postFromPage (e) {
-    var client = { reply: reply };
+    var client = {
+      reply: replyTo.bind(null, e.ports[0])
+    };
     serialization.emission(internalEmitter, client)(e);
-    function reply () {
-      var payload = serialization.parsePayload(atoa(arguments));
-      return e.ports[0].postMessage(payload);
-    }
   }
 
   function broadcastToPages (type) {
@@ -45,5 +44,10 @@ function createChannel () {
     function emitToClient (client) {
       return client.postMessage({ type: type, payload: payload, __broadcast: true });
     }
+  }
+
+  function replyTo (client) {
+    var payload = serialization.parsePayload(atoa(arguments, 1));
+    client.postMessage(payload);
   }
 }

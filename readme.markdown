@@ -133,10 +133,13 @@ The public `swivel` API exports a number of methods designed for web pages.
 
 ## `swivel.on(type, handler)`
 
-This method listens for events emitted by the [`ServiceWorker` API][sw-api]. You can bind an event handler that receives all arguments emitted at that level. It can be triggered from a `ServiceWorker` in two different ways. Returns [`swivel`][wp-api] for chaining.
+This method listens for events emitted by the [`ServiceWorker` API][sw-api]. You can bind an event handler that receives all arguments emitted at that level. It can be triggered from a `ServiceWorker` in 3 different ways. Returns [`swivel`][wp-api] for chaining.
 
-- [`swivel.broadcast(type, ...data)`][sw-broadcast] triggers handlers registered with `swivel.on(type, fn)` on every page
-- [`this.reply(type, ...data)`][sw-reply] triggers handlers registered with `swivel.on(type, fn)`
+The following methods -- when called from a `ServiceWorker` -- trigger handlers registered with `swivel.on(type, fn)` on web pages.
+
+- [`swivel.broadcast(type, ...data)`][sw-broadcast] _(every page)_
+- [`swivel.emit(client, type, ...data)`][sw-emit] _(page getting the reply)_
+- [`this.reply(type, ...data)`][sw-reply] _(page getting the reply)_
 
 To differentiate between the two, you may check the `this.broadcast` boolean property in your `handler`.
 
@@ -216,6 +219,18 @@ This method returns a `Promise` so you can await for the message to be successfu
 ```js
 swivel.broadcast('urgent', 'news', 'New pope elected').then(function () {
   console.log('success');
+});
+```
+
+## `swivel.emit(client, type, ...data)`
+
+During `fetch` events in a `ServiceWorker`, it's possible to message a `client` using `swivel.emit`. The web page can then receive and handle the message using [`swivel.on`][wp-listen].
+
+##### Example
+
+```js
+self.addEventListener('fetch', function (e) {
+  swivel.emit(e.client, 'data', { foo: 'bar' });
 });
 ```
 
@@ -303,3 +318,4 @@ MIT
 [sw-once]: #swiveloncetype-handler-2
 [sw-broadcast]: #swivelbroadcasttype-data
 [sw-reply]: #thisreplytype-data
+[sw-emit]: #swivelemitclient-type-data
