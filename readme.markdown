@@ -137,9 +137,9 @@ This method listens for events emitted by the [`ServiceWorker` API][sw-api]. You
 
 The following methods -- when called from a `ServiceWorker` -- trigger handlers registered with `swivel.on(type, fn)` on web pages.
 
-- [`swivel.broadcast(type, ...data)`][sw-broadcast] _(every page)_
-- [`swivel.emit(client, type, ...data)`][sw-emit] _(page getting the reply)_
-- [`this.reply(type, ...data)`][sw-reply] _(page getting the reply)_
+- [`swivel.broadcast(type, ...data)`][sw-broadcast] _(message is broadcasted to every page)_
+- [`swivel.emit(client, type, ...data)`][sw-emit] _(message is unicasted using `client.postMessage`)_
+- [`this.reply(type, ...data)`][sw-reply] _(message is unicasted using `MessageChannel`)_
 
 To differentiate between the two, you may check the `this.broadcast` boolean property in your `handler`.
 
