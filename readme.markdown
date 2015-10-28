@@ -4,7 +4,7 @@
 
 # Inspiration
 
-Understanding the raw API for message passing between `ServiceWorker` and pages can be kind of confusing. There's `MessageChannel`, ports, `postMessage` deeply buried in `navigator.serviceWorker.controller.postMessage`, `addEventListener`, and even promises are involved.
+Understanding the raw API for message passing between `ServiceWorker` and pages can be kind of confusing. There's `MessageChannel`, ports, `postMessage` deeply buried in `navigator.serviceWorker.controller.postMessage`, `addEventListener`, multiple `ServiceWorkerRegistration` instances, and even promises are involved.
 
 `ServiceWorker` is too awesome to let this problem hinder its adoption, so I made `swivel` in hopes people will find it easier to share messages across pages and their `ServiceWorker`. For an introduction of `ServiceWorker` you should look at [this article][1].
 
@@ -30,7 +30,7 @@ navigator.serviceWorker
   .register('/service-worker.js')
   .then(navigator.serviceWorker.ready)
   .then(function () {
-    swivel.on('data', function (...data) {
+    swivel.on('data', function handler (context, ...data) {
       // do something with ...data
     });
   });
@@ -53,7 +53,7 @@ swivel.emit('data', ...data).then(function () {
 In your `ServiceWorker`, the API barely changes. You can listen to messages posted from web pages with `swivel.emit` using `swivel.on` in the `ServiceWorker` code.
 
 ```js
-swivel.on('data', function (...data) {
+swivel.on('data', function handler (context, ...data) {
   // do something with ...data
 });
 ```
@@ -62,16 +62,16 @@ If you need to reply to this particular page in the `ServiceWorker`, you could j
 
 
 ```js
-swivel.on('data', function (...data) {
-  this.reply('data', ...response);
+swivel.on('data', function handler (context, ...data) {
+  context.reply('data', ...response);
 });
 ```
 
-You guessed correctly, `this.reply` returns a `Promise`.
+You guessed correctly, `context.reply` returns a `Promise`.
 
 ```js
-swivel.on('data', function (...data) {
-  this.reply('data', ...response).then(function () {
+swivel.on('data', function handler (context, ...data) {
+  context.reply('data', ...response).then(function () {
     // ... more swivelling!
   });
 });
@@ -139,15 +139,17 @@ The following methods -- when called from a `ServiceWorker` -- trigger handlers 
 
 - [`swivel.broadcast(type, ...data)`][sw-broadcast] _(message is broadcasted to every page)_
 - [`swivel.emit(client, type, ...data)`][sw-emit] _(message is unicasted using `client.postMessage`)_
-- [`this.reply(type, ...data)`][sw-reply] _(message is unicasted using `MessageChannel`)_
+- [`context.reply(type, ...data)`][sw-reply] _(message is unicasted using `MessageChannel`)_
 
-To differentiate between the two, you may check the `this.broadcast` boolean property in your `handler`.
+The handler has a `context, ...data` signature.
+
+A `context.broadcast` flag in the `handler` indicates whether the message was broadcasted or unicasted by the `ServiceWorker`.
 
 ##### Example
 
 ```js
-swivel.on('data', function (datum1, datum2) {
-  console.log(datum1, datum2);
+swivel.on('data', function handler (context, ...data) {
+  console.log(...data);
 });
 ```
 
@@ -158,8 +160,8 @@ Equivalent to [`swivel.on`][wp-listen] but will only ever be called once. Return
 ##### Example
 
 ```js
-swivel.once('data', function (datum1, datum2) {
-  console.log(datum1, datum2);
+swivel.once('data', function handler (context, ...data) {
+  console.log(...data);
 });
 ```
 
@@ -170,11 +172,8 @@ Unregisters a `handler` of type `type` that was previously registered using [`sw
 ##### Example
 
 ```js
-swivel.on('data', function handler (datum1, datum2) {
-  console.log(datum1, datum2);
-  if (datum1 === 'end') {
-    swivel.off('data', handler);
-  }
+swivel.on('data', function handler (context, ...data) {
+  swivel.off('data', handler);
 });
 ```
 
@@ -198,6 +197,24 @@ swivel.emit('data', { foo: 'bar' }, 'baz').then(function () {
 });
 ```
 
+## `swivel.at(worker)`
+
+The `swivel.at(worker)` method returns an API identical to [`swivel`][wp-api] that talks strictly with `worker`. The default `swivel` API interacts with the worker found at `navigator.serviceWorker.controller`. You can use as many channels as necessary.
+
+##### Example
+
+```js
+navigator.serviceWorker
+  .getRegistration('/other')
+  .then(function (registration) {
+    var otherChannel = swivel.at(registration.active);
+    otherChannel.emit('data', { hello: 'world' });
+    otherChannel.on('data', function handler (context, ...data) {
+      console.log(...data);
+    });
+  });
+```
+
 # API in `ServiceWorker`
 
 The public `swivel` API exports a number of methods designed for `ServiceWorker` scripts.
@@ -209,7 +226,7 @@ This method sends a message of type `type` from the `ServiceWorker` to every cli
 ##### Example
 
 ```js
-swivel.broadcast('urgent', 'news', 'New pope elected');
+swivel.broadcast('urgent', ...data);
 ```
 
 This method returns a `Promise` so you can await for the message to be successfully transferred to all clients.
@@ -217,7 +234,7 @@ This method returns a `Promise` so you can await for the message to be successfu
 ##### Example
 
 ```js
-swivel.broadcast('urgent', 'news', 'New pope elected').then(function () {
+swivel.broadcast('urgent', ...data).then(function () {
   console.log('success');
 });
 ```
@@ -241,34 +258,32 @@ You can use this method to listen from messages sent from a web page to the `Ser
 ##### Example
 
 ```js
-swivel.on('data', function (datum1, datum2) {
-  console.log(datum1, datum2);
+swivel.on('data', function handler (context, ...data) {
+  console.log(...data);
 });
 ```
 
-The event `handler` is provided with a `this` context that's able to reply to messages originating from a web page.
+The event `handler` is provided with a `context` object that allows for replies to messages originating from a web page.
 
-### `this.reply(type, ...data)`
+### `context.reply(type, ...data)`
 
 Using this method, your `ServiceWorker` can reply to messages received from an individual web page.
 
 ##### Example
 
 ```js
-swivel.on('data', function (datum1, datum2) {
-  console.log(datum1, datum2);
-  this.reply('datum3', datum1 * datum2);
+swivel.on('data', function handler (context, [x, y]) {
+  context.reply('result', x * y);
 });
 ```
 
-Furthermore, `this.reply` returns a `Promise`, so you can await for the reply to be successfully transferred.
+Furthermore, `context.reply` returns a `Promise`, so you can await for the reply to be successfully transferred.
 
 ##### Example
 
 ```js
-swivel.on('data', function (datum1, datum2) {
-  console.log(datum1, datum2);
-  this.reply('datum3', datum1 * datum2).then(function () {
+swivel.on('data', function handler (context, [x, y]) {
+  context.reply('result', x * y).then(function () {
     console.log('success');
   });
 });
@@ -276,14 +291,13 @@ swivel.on('data', function (datum1, datum2) {
 
 ## `swivel.once(type, handler)`
 
-Equivalent to [`swivel.on`][sw-listen] but will only ever be called once. Returns [`swivel`][sw-api] for chaining. Also able to use `this.reply` for bidirectional communication.
+Equivalent to [`swivel.on`][sw-listen] but will only ever be called once. Returns [`swivel`][sw-api] for chaining. Also able to use [`context.reply`][sw-reply] in `handler(context, ...data)` for bidirectional communication.
 
 ##### Example
 
 ```js
-swivel.once('data', function (datum1, datum2) {
-  console.log(datum1, datum2);
-  this.reply('datum3', datum1 * datum2).then(function () {
+swivel.once('data', function handler (context, [x, y]) {
+  context.reply('result', x * y).then(function () {
     console.log('success');
   });
 });
@@ -296,11 +310,8 @@ Unregisters a `handler` of type `type` that was previously registered using [`sw
 ##### Example
 
 ```js
-swivel.on('data', function handler (datum1, datum2) {
-  console.log(datum1, datum2);
-  if (datum1 === 'end') {
-    swivel.off('data', handler);
-  }
+swivel.on('data', function handler (context, ...data) {
+  swivel.off('data', handler);
 });
 ```
 
@@ -317,5 +328,5 @@ MIT
 [sw-listen]: #swivelontype-handler-2
 [sw-once]: #swiveloncetype-handler-2
 [sw-broadcast]: #swivelbroadcasttype-data
-[sw-reply]: #thisreplytype-data
+[sw-reply]: #contextreplytype-data
 [sw-emit]: #swivelemitclient-type-data

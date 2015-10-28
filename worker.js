@@ -21,18 +21,15 @@ function createChannel () {
   return api;
 
   function selfed (method) {
-    return selfish;
-    function selfish () {
-      internalEmitter[method].apply(this, arguments);
+    return function selfish () {
+      internalEmitter[method].apply(null, arguments);
       return api;
-    }
+    };
   }
 
   function postFromPage (e) {
-    var client = {
-      reply: replyTo.bind(null, e.ports[0])
-    };
-    serialization.emission(internalEmitter, client)(e);
+    var reply = replyTo.bind(null, e.ports[0]);
+    serialization.emission(internalEmitter, { reply: reply })(e);
   }
 
   function broadcastToPages (type) {

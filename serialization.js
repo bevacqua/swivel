@@ -21,9 +21,9 @@ function emission (emitter, context) {
   function emit (e) {
     var data = e.data;
     if (data.type === 'error') {
-      emitter.emit.call(context, 'error', deserializeError(data.error));
+      emitter.emit.call(null, 'error', context, deserializeError(data.error));
     } else {
-      emitter.emit.apply(context, [data.type].concat(data.payload));
+      emitter.emit.apply(null, [data.type, context].concat(data.payload));
     }
   }
 }
