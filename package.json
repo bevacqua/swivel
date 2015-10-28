@@ -1,6 +1,6 @@
 {
   "name": "swivel",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Message passing between ServiceWorker and pages made simple",
   "main": "swivel.js",
   "author": "Nicolas Bevacqua <nicolasbevacqua@gmail.com> (http://bevacqua.io/)",
