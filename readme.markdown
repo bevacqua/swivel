@@ -334,4 +334,4 @@ MIT
 [sw-broadcast]: #swivelbroadcasttype-data
 [sw-reply]: #contextreplytype-data
 [sw-emit]: #swivelemitclient-type-data
-[2]: http://i.imgur.com/Svqju4J.gif
+[2]: https://i.imgur.com/Svqju4J.gif
