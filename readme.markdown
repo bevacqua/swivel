@@ -10,6 +10,10 @@ Understanding the raw API for message passing between `ServiceWorker` and pages 
 
 > I named it `swivel` mostly because it starts with `sw` and it wasn't taken on `npm`.
 
+Also:
+
+![Ron Swanson using swivel][2]
+
 # Installation
 
 Install it from `npm`. You can then include `swivel` in your pages and your `ServiceWorker`, and Swivel will figure out what API to export depending on whether it's running within the `ServiceWorker` or a regular web page.
@@ -330,3 +334,4 @@ MIT
 [sw-broadcast]: #swivelbroadcasttype-data
 [sw-reply]: #contextreplytype-data
 [sw-emit]: #swivelemitclient-type-data
+[2]: http://i.imgur.com/Svqju4J.gifv
