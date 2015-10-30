@@ -243,15 +243,27 @@ swivel.broadcast('urgent', ...data).then(function () {
 });
 ```
 
-## `swivel.emit(client, type, ...data)`
+## `swivel.emit(clientId, type, ...data)`
 
-During `fetch` events in a `ServiceWorker`, it's possible to message a `client` using `swivel.emit`. The web page can then receive and handle the message using [`swivel.on`][wp-listen].
+During `fetch` events in a `ServiceWorker`, it's possible to message a client using `swivel.emit`. The web page can then receive and handle the message using [`swivel.on`][wp-listen].
 
 ##### Example
 
 ```js
 self.addEventListener('fetch', function (e) {
-  swivel.emit(e.client, 'data', { foo: 'bar' });
+  swivel.emit(e.clientId, 'data', { foo: 'bar' });
+});
+```
+
+Furthermore, `swivel.emit` returns a `Promise`, so you can await for the message to be successfully transferred.
+
+##### Example
+
+```js
+self.addEventListener('fetch', function (e) {
+  swivel.emit(e.clientId, 'data', { foo: 'bar' }).then(function () {
+    console.log('success');
+  });
 });
 ```
 

@@ -1,3 +1,8 @@
+# 4.0.0 Client, Ack
+
+- Changed API to reply to a client, uses `event.clientId` proposal
+- `swivel.emit` and `context.reply`, on the ServiceWorker, now return a `Promise` as documented
+
 # 3.0.0 Twisted Mind
 
 - Dropped `this` context for `.on` handlers, in favor of a `context` parameter, because arrow functions
