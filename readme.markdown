@@ -8,11 +8,7 @@ Understanding the raw API for message passing between `ServiceWorker` and pages 
 
 `ServiceWorker` is too awesome to let this problem hinder its adoption, so I made `swivel` in hopes people will find it easier to share messages across pages and their `ServiceWorker`. For an introduction of `ServiceWorker` you should look at [this article][1].
 
-> I named it `swivel` mostly because it starts with `sw` and it wasn't taken on `npm`.
-
-Also:
-
-![Ron Swanson using swivel][2]
+> I named it `swivel` mostly because it starts with `sw` and it wasn't taken on `npm`. And, [because][2].
 
 # Installation
 
