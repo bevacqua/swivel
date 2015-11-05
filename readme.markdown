@@ -138,7 +138,7 @@ This method listens for events emitted by the [`ServiceWorker` API][sw-api]. You
 The following methods -- when called from a `ServiceWorker` -- trigger handlers registered with `swivel.on(type, fn)` on web pages.
 
 - [`swivel.broadcast(type, ...data)`][sw-broadcast] _(message is broadcasted to every page)_
-- [`swivel.emit(client, type, ...data)`][sw-emit] _(message is unicasted using `client.postMessage`)_
+- [`swivel.emit(clientId, type, ...data)`][sw-emit] _(message is unicasted using `client.postMessage`)_
 - [`context.reply(type, ...data)`][sw-reply] _(message is unicasted using `MessageChannel`)_
 
 The handler has a `context, ...data` signature.
@@ -341,6 +341,6 @@ MIT
 [sw-once]: #swiveloncetype-handler-2
 [sw-broadcast]: #swivelbroadcasttype-data
 [sw-reply]: #contextreplytype-data
-[sw-emit]: #swivelemitclient-type-data
+[sw-emit]: #swivelemitclientid-type-data
 [2]: https://i.imgur.com/Svqju4J.gif
 [3]: https://ponyfoo.com/articles/serviceworker-messagechannel-postmessage "ServiceWorker, MessageChannel, & postMessage on Pony Foo"
