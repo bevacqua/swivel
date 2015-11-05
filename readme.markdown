@@ -4,7 +4,7 @@
 
 # Inspiration
 
-Understanding the raw API for message passing between `ServiceWorker` and pages can be kind of confusing. There's `MessageChannel`, ports, `postMessage` deeply buried in `navigator.serviceWorker.controller.postMessage`, `addEventListener`, multiple `ServiceWorkerRegistration` instances, and even promises are involved.
+[Understanding the raw API][3] for message passing between `ServiceWorker` and pages can be kind of confusing. There's `MessageChannel`, ports, `postMessage` deeply buried in `navigator.serviceWorker.controller.postMessage`, `addEventListener`, multiple `ServiceWorkerRegistration` instances, and even promises are involved.
 
 `ServiceWorker` is too awesome to let this problem hinder its adoption, so I made `swivel` in hopes people will find it easier to share messages across pages and their `ServiceWorker`. For an introduction of `ServiceWorker` you should look at [this article][1].
 
@@ -343,3 +343,4 @@ MIT
 [sw-reply]: #contextreplytype-data
 [sw-emit]: #swivelemitclient-type-data
 [2]: https://i.imgur.com/Svqju4J.gif
+[3]: https://ponyfoo.com/articles/serviceworker-messagechannel-postmessage "ServiceWorker, MessageChannel, & postMessage on Pony Foo"
