@@ -37,6 +37,7 @@ function createChannel () {
       var payload = serialization.parsePayload(atoa(arguments));
       var messageChannel = new MessageChannel();
       messageChannel.port1.addEventListener('message', postFromWorker);
+      messageChannel.port1.start();
       return worker.postMessage(payload, [messageChannel.port2]);
     }
 
