@@ -1,3 +1,8 @@
+# 4.0.1 Client, Ack Ack
+
+- Fixes for `context.reply` from a ServiceWorker
+- Fixes for `swivel.emit` from a ServiceWorker
+
 # 4.0.0 Client, Ack
 
 - Changed API to reply to a client, uses `event.clientId` proposal
