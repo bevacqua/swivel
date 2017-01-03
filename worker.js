@@ -55,6 +55,17 @@ function createChannel () {
   }
 
   function replyToClient (clientId) {
-    return self.clients.match(e.clientId).then(replyTo);
+    return self.clients.matchAll().then(findClientById(clientId)).then(replyTo);
+  }
+
+  function findClientById (clientId) {
+    return function findClientByIdFromList (clients) {
+      for (var i = 0; i < clients.length; i++) {
+        if (clients[i].id === clientId) {
+          return clients[i];
+        }
+      }
+      return null;
+    };
   }
 }
