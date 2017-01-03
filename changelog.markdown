@@ -1,4 +1,4 @@
-# 4.0.2 Client, Ack Ack
+# 4.0.3 Client, Ack Ack
 
 - Fixes for `context.reply` from a ServiceWorker
 - Fixes for `swivel.emit` from a ServiceWorker
