@@ -55,7 +55,12 @@ function createChannel () {
   }
 
   function replyToClient (clientId) {
-    return self.clients.matchAll().then(findClientById(clientId)).then(replyTo);
+    const args = atoa(arguments)
+    return self.clients.matchAll().then(findClientById(clientId)).then(reply);
+    function reply (client) {
+      args[0] = client;
+      replyTo.apply(this, args);
+    }
   }
 
   function findClientById (clientId) {
