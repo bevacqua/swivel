@@ -4,9 +4,9 @@ var page = require('./page');
 var worker = require('./worker');
 var api;
 
-if ('serviceWorker' in navigator) {
+if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
   api = page();
-} else if ('clients' in self) {
+} else if (typeof self !== 'undefined' && 'clients' in self) {
   api = worker();
 } else {
   api = {
